@@ -1,0 +1,32 @@
+package com.secure.payment.service;
+import com.secure.payment.dto.RegisterRequest;
+import com.secure.payment.entity.User;
+import com.secure.payment.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UserService {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    public String register(RegisterRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.warn("Duplicate registration attempt for email: {}", request.getEmail());
+            throw new RuntimeException("Email already registered");
+        }
+        String hashedPassword = passwordEncoder.encode(request.getPassword());
+        User user = User.builder()
+                .email(request.getEmail())
+                .password(hashedPassword)
+                .role("USER")
+                .createdAt(LocalDateTime.now())
+                .build();
+        userRepository.save(user);
+        log.info("New user registered: {}", request.getEmail());
+        return "User registered successfully";
+    }
+}
