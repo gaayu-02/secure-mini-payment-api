@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class UserService {
+    private final JwtUtil jwtUtil;
+    private final LoginAttemptService loginAttemptService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     public String register(RegisterRequest request) {
@@ -29,4 +31,25 @@ public class UserService {
         log.info("New user registered: {}", request.getEmail());
         return "User registered successfully";
     }
+    public String login(LoginRequest request) {
+    if (loginAttemptService.isBlocked(request.getEmail())) {
+        log.warn("Blocked login attempt for email: {}", request.getEmail());
+        throw new RuntimeException("Too many failed attempts. Try later.");
+    }
+    User user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> {
+                log.warn("Login attempt with unknown email: {}", request.getEmail());
+                return new RuntimeException("Invalid credentials");
+            });
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+
+        loginAttemptService.loginFailed(request.getEmail());
+        log.warn("Failed login attempt for email: {}", request.getEmail());
+        throw new RuntimeException("Invalid credentials");
+    }
+    loginAttemptService.loginSucceeded(request.getEmail());
+    String token = jwtUtil.generateToken(user.getEmail());
+    log.info("User logged in successfully: {}", request.getEmail());
+    return token;
+}
 }

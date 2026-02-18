@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SecurePay Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h2>SecurePay</h2>
+        <div class="tabs">
+            <button onclick="showSection('register')">Register</button>
+            <button onclick="showSection('login')">Login</button>
+            <button onclick="showSection('payment')">Payment</button>
+            <button onclick="showSection('transactions')">Transactions</button>
+        </div>
+        <div id="register" class="section">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Password">
+            <button class="primary-btn" onclick="register()">Create Account</button>
+        </div>
+        <div id="login" class="section hidden">
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button class="primary-btn" onclick="login()">Login</button>
+        </div>
+        <div id="payment" class="section hidden">
+            <input type="number" id="amount" placeholder="Amount">
+            <input type="text" id="currency" placeholder="Currency (INR)">
+            <input type="text" id="merchantId" placeholder="Merchant ID">
+            <input type="text" id="referenceId" placeholder="Reference ID">
+            <button class="primary-btn" onclick="makePayment()">Pay Now</button>
+        </div>
+
+        <!-- Transactions -->
+        <div id="transactions" class="section hidden">
+            <button class="primary-btn" onclick="getTransactions()">Load Transactions</button>
+            <ul id="transactionList"></ul>
+        </div>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

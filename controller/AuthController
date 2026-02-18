@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -14,5 +15,13 @@ public class AuthController {
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         String response = userService.register(request);
         return ResponseEntity.ok(response);
+        @PostMapping("/login")
+
     }
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+    String token = userService.login(request);
+    return ResponseEntity.ok().body(
+            Map.of("token", token)
+    );
+}
 }
